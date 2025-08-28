@@ -1,6 +1,6 @@
 import json
 import uuid
-from datetime import datetime
+from datetime import UTC, datetime
 
 import pandas as pd
 from confluent_kafka import Consumer
@@ -23,7 +23,7 @@ def save_batch_to_minio(batch):
     if not batch:
         return
     df = pd.json_normalize(batch)
-    date_str = datetime.now().strftime(format="%Y-%m-%d", tz=datetime.timetz().utc)
+    date_str = datetime.now(UTC).strftime("%Y-%m-%d")
     file_uuid = uuid.uuid4()
     path = f"s3://{bucket_name}/{date_str}/{file_uuid}.parquet"
     df.to_parquet(
