@@ -22,7 +22,6 @@ def generate_users_df(n=100):
     return pd.DataFrame(users)
 
 # 2. Генерация событий
-
 events = {
     1: "track_playback",
     2: "Pause_track",
@@ -203,8 +202,12 @@ def generate_realistic_event(df):
     return event_func(user_row)
 
 # 3. Отправка событий в Kafka
-
-def send_clickstream_events_to_kafka_rps(df, topic="music_events", bootstrap_servers="localhost:19092", rps=2):
+def send_clickstream_events_to_kafka_rps(
+        df: pd.DataFrame=None,
+        topic="music_events",
+        bootstrap_servers="localhost:19092",
+        rps=2,
+):
     conf = {"bootstrap.servers": bootstrap_servers}
     producer = Producer(conf)
     interval = 1.0 / rps
@@ -224,4 +227,5 @@ def send_clickstream_events_to_kafka_rps(df, topic="music_events", bootstrap_ser
         print("Stopped by user.")
 
 df = generate_users_df(100)
+
 send_clickstream_events_to_kafka_rps(df=df, topic="music_events", bootstrap_servers="localhost:19092", rps=2)
