@@ -41,6 +41,10 @@ services:
     depends_on:
       - kafka
 
-networks:
-  default:
-    name: kafka-network
+  ch_server:
+    image: clickhouse/clickhouse-server:24.4.1
+    ports:
+      - "8123:8123"
+    environment:
+      CLICKHOUSE_USER: click
+      CLICKHOUSE_PASSWORD: click
