@@ -1,0 +1,71 @@
+import json
+import uuid
+from datetime import datetime
+
+import pandas as pd
+from confluent_kafka import Consumer
+from cred import access_key, secret_key
+
+KAFKA_BOOTSTRAP_SERVERS = "localhost:19092"
+KAFKA_TOPIC = "music_events"
+KAFKA_GROUP = "parquet-consumer-group"
+BATCH_SIZE = 100
+
+bucket_name = "prod"
+
+storage_options = {
+    "key": access_key,
+    "secret": secret_key,
+    "client_kwargs": {"endpoint_url": "http://localhost:9000"},
+}
+
+def save_batch_to_minio(batch):
+    if not batch:
+        return
+    df = pd.json_normalize(batch)
+    date_str = datetime.now().strftime(format="%Y-%m-%d", tz=datetime.timetz().utc)
+    file_uuid = uuid.uuid4()
+    path = f"s3://{bucket_name}/{date_str}/{file_uuid}.parquet"
+    df.to_parquet(
+        path,
+        index=False,
+        storage_options=storage_options,
+    )
+    print(f"Batch saved to {path}")
+
+def main():
+    consumer_conf = {
+        "bootstrap.servers": KAFKA_BOOTSTRAP_SERVERS,
+        "group.id": KAFKA_GROUP,
+        "auto.offset.reset": "earliest",
+    }
+    consumer = Consumer(consumer_conf)
+    consumer.subscribe([KAFKA_TOPIC])
+
+    batch = []
+    try:
+        while True:
+            msg = consumer.poll(1.0)
+            if msg is None:
+                continue
+            if msg.error():
+                print(f"Kafka error: {msg.error()}")
+                continue
+            try:
+                event = json.loads(msg.value().decode("utf-8"))
+            except Exception as e:
+                print(f"Bad message: {e}")
+                continue
+            batch.append(event)
+            if len(batch) >= BATCH_SIZE:
+                save_batch_to_minio(batch)
+                batch = []
+    except KeyboardInterrupt:
+        print("Stopped by user.")
+    finally:
+        if batch:
+            save_batch_to_minio(batch)
+        consumer.close()
+
+if __name__ == "__main__":
+    main()
