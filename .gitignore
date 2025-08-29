@@ -210,3 +210,5 @@ __marimo__/
 data
 /poetry.lock
 /code/cred.py
+kafka_2.13-3.8.0.tgz
+kafka_2.13-3.8.0

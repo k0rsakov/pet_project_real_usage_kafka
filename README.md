@@ -39,3 +39,6 @@ docker compose build
 - `login`: `minioadmin`
 - `password`: `minioadmin`
 
+## TODO
+
+- [ ] Описать получение Kafka CLI

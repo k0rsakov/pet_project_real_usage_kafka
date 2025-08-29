@@ -3,12 +3,12 @@ import uuid
 from datetime import UTC, datetime
 
 import pandas as pd
-from confluent_kafka import Consumer
+from confluent_kafka import Consumer, TopicPartition
 from cred import access_key, secret_key
 
 KAFKA_BOOTSTRAP_SERVERS = "localhost:19092"
 KAFKA_TOPIC = "music_events"
-KAFKA_GROUP = "parquet-consumer-group"
+KAFKA_GROUP = "ParquetConsumerGroup"
 BATCH_SIZE = 100
 
 bucket_name = "prod"
@@ -27,20 +27,26 @@ def save_batch_to_minio(batch):
     file_uuid = uuid.uuid4()
     path = f"s3://{bucket_name}/{date_str}/{file_uuid}.parquet"
     df.to_parquet(
-        path,
+        path=path,
         index=False,
         storage_options=storage_options,
     )
     print(f"Batch saved to {path}")
 
-def main():
-    consumer_conf = {
+def consume_messages(topic: str | None= None, batch_size: int = 100, offset: int | None = None):
+    conf = {
         "bootstrap.servers": KAFKA_BOOTSTRAP_SERVERS,
         "group.id": KAFKA_GROUP,
         "auto.offset.reset": "earliest",
     }
-    consumer = Consumer(consumer_conf)
-    consumer.subscribe([KAFKA_TOPIC])
+    consumer = Consumer(conf)
+
+    if offset is not None:
+        partitions = consumer.list_topics(topic).topics[topic].partitions
+        for partition in partitions:
+            consumer.assign([TopicPartition(topic, partition, offset)])
+    else:
+        consumer.subscribe([topic])
 
     batch = []
     try:
@@ -57,7 +63,7 @@ def main():
                 print(f"Bad message: {e}")
                 continue
             batch.append(event)
-            if len(batch) >= BATCH_SIZE:
+            if len(batch) >= batch_size:
                 save_batch_to_minio(batch)
                 batch = []
     except KeyboardInterrupt:
@@ -68,4 +74,5 @@ def main():
         consumer.close()
 
 if __name__ == "__main__":
-    main()
+    # Пример вызова: читаем с начала топика
+    consume_messages(KAFKA_TOPIC, batch_size=BATCH_SIZE)
