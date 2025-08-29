@@ -42,3 +42,4 @@ docker compose build
 ## TODO
 
 - [ ] Описать получение Kafka CLI
+- [ ] Команды чтения
