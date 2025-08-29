@@ -1,10 +1,11 @@
 import duckdb
-from cred import access_key, secret_key
 import pandas as pd
-pd.set_option('display.max_columns', None)
+from cred import access_key, secret_key
+
+pd.set_option("display.max_columns", None)
 conn = duckdb.connect(database=":memory:")
 
-df_count = conn.sql(
+count_of_rows = conn.sql(
     f"""
     INSTALL httpfs;
     LOAD httpfs;
@@ -19,9 +20,9 @@ df_count = conn.sql(
     FROM
         's3://prod/*/*.parquet';
     """,
-).df()
+)
 
-print(df_count)
+print(count_of_rows)
 
 df_schema_of_model = conn.sql(
     f"""
