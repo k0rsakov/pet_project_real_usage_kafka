@@ -1,8 +1,7 @@
-from pyspark.sql import SparkSession
-from pyspark.sql.functions import from_json, col
-from pyspark.sql.types import StructType, StructField, StringType, IntegerType, LongType
-
 from cred import access_key, secret_key
+from pyspark.sql import SparkSession
+from pyspark.sql.functions import col, from_json
+from pyspark.sql.types import StringType, StructField, StructType
 
 minio_endpoint = "http://localhost:9000"
 bucket_name = "prod-spark"
@@ -15,8 +14,8 @@ event_params_schema = StructType([])
 event_timestamp_schema = StructType([])
 
 message_schema = StructType([
-    StructField("event_params", StringType()),  # Можно StringType, если не хотим парсить глубже
-    StructField("event_timestamp_ms", StringType())
+    StructField(name="event_params", dataType=StringType()),  # Можно StringType, если не хотим парсить глубже
+    StructField(name="event_timestamp_ms", dataType=StringType()),
 ])
 
 spark = (
@@ -34,24 +33,30 @@ spark = (
 df = (
     spark.readStream
     .format("kafka")
-    .option("kafka.bootstrap.servers", KAFKA_BOOTSTRAP_SERVERS)
-    .option("subscribe", KAFKA_TOPIC)
-    .option("startingOffsets", "earliest")
+    .option(key="kafka.bootstrap.servers", value=KAFKA_BOOTSTRAP_SERVERS)
+    .option(key="subscribe", value=KAFKA_TOPIC)
+    .option(key="startingOffsets", value="earliest")
     .load()
 )
 
 # value приводим к string и парсим json только верхнего уровня
-json_df = df.selectExpr("CAST(value AS STRING) as json_str")
-json_df = json_df.withColumn("event_params", from_json(col("json_str"), message_schema).getField("event_params"))
-json_df = json_df.withColumn("event_timestamp_ms", from_json(col("json_str"), message_schema).getField("event_timestamp_ms"))
+json_df = df.selectExpr("CAST(value AS STRING) AS json_str")
+json_df = json_df.withColumn(
+    colName="event_params",
+    col=from_json(col("json_str"), message_schema).getField("event_params"),
+)
+json_df = json_df.withColumn(
+    colName="event_timestamp_ms",
+    col=from_json(col("json_str"), message_schema).getField("event_timestamp_ms"),
+)
 
 # Сохраняем как есть (RAW), без нормализации
 query = (
     json_df
     .writeStream
     .format("parquet")
-    .option("path", f"s3a://{bucket_name}/")
-    .option("checkpointLocation", f"/tmp/spark_checkpoint/{bucket_name}")
+    .option(key="path", value=f"s3a://{bucket_name}/")
+    .option(key="checkpointLocation", value=f"/tmp/spark_checkpoint/{bucket_name}")
     .outputMode("append")
     .start()
 )
