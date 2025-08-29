@@ -1,4 +1,7 @@
+version: "3.6"
+
 services:
+  # --- Kafka & Zookeeper ---
   zookeeper:
     image: 'confluentinc/cp-zookeeper:7.7.0'
     hostname: zookeeper
@@ -18,7 +21,7 @@ services:
     environment:
       KAFKA_BROKER_ID: 1
       KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
-      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092,PLAINTEXT_HOST://localhost:9092
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092,PLAINTEXT_HOST://localhost:19092
       KAFKA_LISTENERS: PLAINTEXT://0.0.0.0:9092,PLAINTEXT_HOST://0.0.0.0:19092
       KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
       KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
@@ -39,6 +42,7 @@ services:
     depends_on:
       - kafka
 
+  # --- ClickHouse ---
   ch_server:
     image: clickhouse/clickhouse-server:24.4.1
     ports:
@@ -47,6 +51,7 @@ services:
       CLICKHOUSE_USER: click
       CLICKHOUSE_PASSWORD: click
 
+  # --- MinIO ---
   minio:
     image: minio/minio:RELEASE.2024-12-18T13-15-44Z
     restart: always
@@ -59,3 +64,42 @@ services:
     ports:
       - "9000:9000"
       - "9001:9001"
+
+  # --- Spark Master ---
+  spark-master:
+    image: andreper/spark-master:3.0.0
+    container_name: spark-master
+    ports:
+      - 8080:8080  # Spark master UI
+      - 7077:7077  # Spark cluster connection
+    environment:
+      - SPARK_MODE=master
+    volumes:
+      - ./build/workspace:/opt/workspace
+
+  # --- Spark Worker (только один!) ---
+  spark-worker-1:
+    image: andreper/spark-worker:3.0.0
+    container_name: spark-worker-1
+    environment:
+      - SPARK_WORKER_CORES=2
+      - SPARK_WORKER_MEMORY=2g
+      - SPARK_MODE=worker
+      - SPARK_MASTER=spark://spark-master:7077
+    ports:
+      - 8081:8081  # Spark worker UI
+    depends_on:
+      - spark-master
+    volumes:
+      - ./build/workspace:/opt/workspace
+
+  # --- JupyterLab (со Spark внутри для демо) ---
+  jupyterlab:
+    image: jupyter/datascience-notebook:latest
+    container_name: jupyterlab
+    ports:
+      - 8888:8888
+    depends_on:
+      - spark-master
+      - spark-worker-1
+    command: jupyter lab --ip='*' --allow-root --no-browser --ServerApp.token='' --ServerApp.password=''
