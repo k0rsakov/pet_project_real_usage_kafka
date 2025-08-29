@@ -18,7 +18,7 @@ count_of_rows = conn.sql(
     SELECT
         COUNT(*) AS count_of_rows
     FROM
-        's3://prod/*/*.parquet';
+        's3://prod-python/*/*.parquet';
     """,
 )
 
@@ -34,7 +34,7 @@ df_schema_of_model = conn.sql(
     SET s3_secret_access_key = '{secret_key}';
     SET s3_use_ssl = FALSE;
 
-    SELECT path_in_schema, column_id FROM parquet_metadata('s3://prod/*/*.parquet');
+    SELECT path_in_schema, column_id FROM parquet_metadata('s3://prod-python/*/*.parquet');
     """,
 )
 
@@ -53,7 +53,7 @@ first_10_rows = conn.sql(
     SELECT
         *
     FROM
-        's3://prod/*/*.parquet'
+        's3://prod-python/*/*.parquet'
     LIMIT 10;
     """,
 )
@@ -82,7 +82,7 @@ first_10_rows_1_event_id = conn.sql(
         "event_timestamp_ms.ts" AS ts,
         "event_timestamp_ms.ts_ms" AS ts_ms,
     FROM
-        's3://prod/*/*.parquet'
+        's3://prod-python/*/*.parquet'
     WHERE
         1=1
         AND "event_params.event_type_id" = 1

@@ -11,7 +11,7 @@ KAFKA_TOPIC = "music_events"
 KAFKA_GROUP = "ParquetConsumerGroup"
 BATCH_SIZE = 100
 
-bucket_name = "prod"
+bucket_name = "prod-python"
 
 storage_options = {
     "key": access_key,

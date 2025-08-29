@@ -43,3 +43,21 @@ docker compose build
 
 - [ ] Описать получение Kafka CLI
 - [ ] Команды чтения
+
+```bash
+docker exec -it kafka kafka-consumer-groups --bootstrap-server localhost:9092 --group ParquetConsumerGroup --describe
+```
+
+```bash
+docker exec -it kafka kafka-consumer-groups --bootstrap-server localhost:9092 --group mygroup --describe
+```
+
+Очистка offset:
+```bash
+docker exec -it kafka kafka-consumer-groups --bootstrap-server localhost:9092 --group ParquetConsumerGroup --to-earliest --reset-offsets --execute --topic music_events
+```
+
+
+```bash
+docker exec -it kafka kafka-consumer-groups --bootstrap-server localhost:9092 --group mygroup --to-earliest --reset-offsets --execute --topic music_events
+```
