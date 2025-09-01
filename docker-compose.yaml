@@ -34,7 +34,7 @@ services:
     image: 'provectuslabs/kafka-ui:v0.7.2'
     container_name: kafka-ui
     ports:
-      - '8080:8080'
+      - '8088:8080'
     environment:
       KAFKA_CLUSTERS_0_NAME: local
       KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: kafka:9092
@@ -95,11 +95,11 @@ services:
 
   # --- JupyterLab (со Spark внутри для демо) ---
   jupyterlab:
-    image: jupyter/datascience-notebook:latest
+    image: andreper/jupyterlab:3.0.0-spark-3.0.0
     container_name: jupyterlab
     ports:
       - 8888:8888
-    depends_on:
-      - spark-master
-      - spark-worker-1
+      - 4040:4040
+    volumes:
+      - ./build/workspace:/opt/workspace
     command: jupyter lab --ip='*' --allow-root --no-browser --ServerApp.token='' --ServerApp.password=''
