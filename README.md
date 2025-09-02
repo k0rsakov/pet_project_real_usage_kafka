@@ -196,7 +196,7 @@ flowchart TB
 
 Создаём необходимые сущности для чтения Kafka.
 
-> Ниже две модели для чтения топика `music_events` и `my_topic`
+> Ниже две модели, которые помогут прочитать топики: `music_events`, `my_topic` и сохранить данные.
 
 ```sql
 DROP TABLE IF EXISTS kafka_simple_event_consumer;
