@@ -260,10 +260,11 @@ def generate_realistic_event(df: pd.DataFrame = None) -> dict[str, Any]:
     # вероятности того или иного события
     event_weights = [0.35, 0.15, 0.13, 0.12, 0.07, 0.08, 0.06, 0.04]
     user_row = df.sample(n=1).iloc[0]
-    event_type_id = random.choices(
+    event_type_id = random.choices(  # noqa: S311
         population=event_ids,
-        weights=event_weights, k=1
-    )[0]  # noqa: S311
+        weights=event_weights,
+        k=1,
+    )[0]
     event_func = event_functions[event_type_id]
     return event_func(user_row)
 
