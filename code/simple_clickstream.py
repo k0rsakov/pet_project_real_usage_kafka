@@ -30,6 +30,7 @@ def generate_users_df(n: int = 100) -> pd.DataFrame:
     :return: DataFrame с информацией о пользователях.
     """
     faker = Faker(locale="ru_RU")
+    print(f"Generating {n} users...")
     users = []
     for _ in range(n):
         users.append({  # noqa: PERF401
@@ -259,7 +260,6 @@ def generate_realistic_event(df: pd.DataFrame = None) -> dict[str, Any]:
     # вероятности того или иного события
     event_weights = [0.35, 0.15, 0.13, 0.12, 0.07, 0.08, 0.06, 0.04]
     user_row = df.sample(n=1).iloc[0]
-    print(type(user_row))
     event_type_id = random.choices(
         population=event_ids,
         weights=event_weights, k=1
@@ -301,5 +301,5 @@ def send_clickstream_events_to_kafka_rps(
         print("Stopped by user.")
 
 if __name__ == "__main__":
-    df = generate_users_df(n=10)
+    df = generate_users_df(n=10_000)
     send_clickstream_events_to_kafka_rps(df, topic="music_events", bootstrap_servers="localhost:19092", rps=2)
