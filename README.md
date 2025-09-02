@@ -257,13 +257,13 @@ CREATE MATERIALIZED VIEW kafka_music_event_mat_view TO kafka_music_event_phys_ta
     AS SELECT * FROM kafka_music_event_consumer;
 ```
 
-Чтение топика `my_topic` в ClickHouse:
+Чтение данных из топика `my_topic` в ClickHouse:
 
 ```sql
 SELECT * FROM kafka_simple_event_mat_view;
 ```
 
-Чтение топика `music_events` в ClickHouse:
+Чтение данных из топика `music_events` в ClickHouse:
 
 ```sql
 SELECT * FROM kafka_music_event_mat_view;
