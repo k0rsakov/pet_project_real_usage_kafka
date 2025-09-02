@@ -19,7 +19,13 @@ storage_options = {
     "client_kwargs": {"endpoint_url": "http://localhost:9000"},
 }
 
-def save_batch_to_minio(batch):
+def save_batch_to_minio(batch) -> None:
+    """
+    Метод для сохранения батча сообщений в MinIO в формате Parquet.
+
+    :param batch: Список сообщений для сохранения.
+    :return: None
+    """
     if not batch:
         return
     df = pd.json_normalize(batch)
@@ -33,7 +39,19 @@ def save_batch_to_minio(batch):
     )
     print(f"Batch saved to {path}")
 
-def consume_messages(topic: str | None= None, batch_size: int = 100, offset: int | None = None):
+def consume_messages(
+        topic: str | None= None,
+        batch_size: int = 100,
+        offset: int | None = None,
+) -> None:
+    """
+    Метод для чтения сообщений из Kafka и сохранения их в MinIO в формате Parquet.
+
+    :param topic: Топик Kafka для чтения сообщений.
+    :param batch_size: Размер батча для сохранения в MinIO.
+    :param offset: Offset для начала чтения сообщений (если None, читаем с текущего положения).
+    :return: None
+    """
     conf = {
         "bootstrap.servers": KAFKA_BOOTSTRAP_SERVERS,
         "group.id": KAFKA_GROUP,
@@ -75,4 +93,4 @@ def consume_messages(topic: str | None= None, batch_size: int = 100, offset: int
 
 if __name__ == "__main__":
     # Пример вызова: читаем с начала топика
-    consume_messages(KAFKA_TOPIC, batch_size=BATCH_SIZE)
+    consume_messages(topic=KAFKA_TOPIC, batch_size=BATCH_SIZE)
