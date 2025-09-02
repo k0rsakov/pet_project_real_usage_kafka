@@ -33,10 +33,9 @@ docker compose up -d
 - `login`: `minioadmin`
 - `password`: `minioadmin`
 
-
 ## Kafka
 
-Перед дальнейшим чтением рекомендую свою статью – 
+Перед дальнейшим чтением рекомендую свою статью –
 [Инфраструктура для data engineer Kafka](https://habr.com/ru/articles/836302/).
 
 Kafka – это брокер сообщений, который имеет принцип "*Write once read many (WORM)*".
@@ -64,10 +63,12 @@ flowchart LR
 #### Просмотр сообщений
 
 Есть два варианта:
+
 - В [Kafka UI](http://localhost:8080/)
 - Через Kafka CLI
 
 Просмотр сообщений "_Без группы_":
+
 ```bash
 docker exec -it kafka kafka-console-consumer \
   --bootstrap-server localhost:9092 \
@@ -76,6 +77,7 @@ docker exec -it kafka kafka-console-consumer \
 ```
 
 Просмотр сообщений "_Только новые_":
+
 ```bash
 docker exec -it kafka kafka-console-consumer \
   --bootstrap-server localhost:9092 \
@@ -83,6 +85,7 @@ docker exec -it kafka kafka-console-consumer \
 ```
 
 Просмотр сообщений "_Новые не прочитанные_":
+
 ```bash
 docker exec -it kafka kafka-console-consumer \
   --bootstrap-server localhost:9092 \
@@ -104,7 +107,6 @@ docker exec -it kafka kafka-consumer-groups \
 При запуске [simple_clickstream.py](code/simple_clickstream.py) эмулируется кликстрим музыкального сервиса.
 
 В Kafka topic отправляются события:
-
 
 | id | name_en                  | name_ru               |
 |----|--------------------------|-----------------------|
@@ -129,12 +131,13 @@ docker exec -it kafka kafka-consumer-groups \
 
 ### Просмотр сообщений
 
-Запускаем [simple_consumer.py](code/simple_consumer.py). Но нам этот вариант не подходит для работы, потому что он 
+Запускаем [simple_consumer.py](code/simple_consumer.py). Но нам этот вариант не подходит для работы, потому что он
 только читает сообщения, но не собирает их.
 
 ### Сбор `events`
 
 Рассмотрим два способа сбора `events`:
+
 - Через Python + MinIO
 - Через ClickHouse
 
@@ -157,20 +160,21 @@ flowchart TB
     style D fill:#76a5af,stroke:#333,stroke-width:2px
 ```
 
-
 ##### Data quality
 
-Для проверки качества данных, записанных в MinIO можно воспользоваться 
+Для проверки качества данных, записанных в MinIO можно воспользоваться
 [check_count_partition_prod_python.py](code/check_count_partition_prod_python.py).
 
 Данный скрипт покажет:
+
 1) Текущее количество строк в `bucket`
 2) Текущая "_плоская_" модель данных в `bucket`
 3) Первые десять (10) строк события `track_playback` (`1`)
 
 #### ClickHouse
 
-Перед дальнейшим чтением рекомендую свои статьи: 
+Перед дальнейшим чтением рекомендую свои статьи:
+
 - [Инфраструктура для Data-Engineer ClickHouse](https://habr.com/ru/articles/842818/)
 - [CDC на примитивах](https://habr.com/ru/articles/812797/)
 
@@ -270,21 +274,16 @@ WHERE 1=1
 AND JSONExtractInt(event_params, 'event_type_id') = 1;
 ```
 
+## Рекомендации
 
-```bash
-docker exec -it kafka kafka-consumer-groups --bootstrap-server localhost:9092 --group ParquetConsumerGroup --describe
-```
-
-```bash
-docker exec -it kafka kafka-consumer-groups --bootstrap-server localhost:9092 --group mygroup --describe
-```
-
-Очистка offset:
-```bash
-docker exec -it kafka kafka-consumer-groups --bootstrap-server localhost:9092 --group ParquetConsumerGroup --to-earliest --reset-offsets --execute --topic music_events
-```
-
-
-```bash
-docker exec -it kafka kafka-consumer-groups --bootstrap-server localhost:9092 --group mygroup --to-earliest --reset-offsets --execute --topic music_events
-```
+1) Не забывайте создавать группу для чтения, чтобы фиксировать `offset`
+2) Если у вас есть возможность читать данные в виде `.json`, чтобы не переживать за модель данных, используйте её.
+3) Для чтения Kafka можно использовать и другие инструменты: Spark, Kafka Connect, NiFi и другие. Я показал просто
+   примеры того как можно работать с топиками. Вы выбирайте инструмент "*по себе*"
+4) Пробуйте другие форматы записи: `.avro`, Protobuf, String, Binary, etc
+5) Не забывайте про партиционирование в Kafka и при сохранении информации
+    1) Партиционирование в Kafka помогает быстрее читать и писать данные из/в топик
+    2) Партиционирование в БД/S3 помогает быстрее читать и писать данные в конкретной партиции
+6) Рекомендую книгу по
+   Kafka – [Apache Kafka. Потоковая обработка и анализ данных, 2-е издание](https://www.piter.com/collection/bazy-dannyh/product/apache-kafka-potokovaya-obrabotka-i-analiz-dannyh-2-e-izdanie).
+   Там много основ, которые до сих пор не устарели.
