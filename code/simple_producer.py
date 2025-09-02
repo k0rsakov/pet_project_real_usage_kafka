@@ -1,6 +1,7 @@
 import json
 import time
 
+import pendulum
 import uuid_utils as uuid
 from confluent_kafka import Producer
 from faker import Faker
@@ -15,6 +16,7 @@ def generate_list_of_dict() -> dict[str, str]:
         "first_name": fake.first_name(),
         "last_name": fake.last_name(),
         "middle_name": fake.middle_name(),
+        "timestamp": pendulum.now("UTC").to_iso8601_string(),
     }
 
 
