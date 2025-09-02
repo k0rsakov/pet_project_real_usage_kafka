@@ -19,7 +19,7 @@ events = {
     8: "track_unlike",
 }
 
-FAKE = Faker(locale="ru_RU")
+FAKER = Faker(locale="ru_RU")
 
 
 def generate_users_df(n: int = 100) -> pd.DataFrame:
@@ -42,7 +42,7 @@ def generate_users_df(n: int = 100) -> pd.DataFrame:
 
 
 
-def event_track_playback(user) -> dict[str, Any]:
+def event_track_playback(user: pd.Series = None) -> dict[str, Any]:
     """
     Метод возвращает событие воспроизведения трека.
 
@@ -58,7 +58,7 @@ def event_track_playback(user) -> dict[str, Any]:
             "platform_token": user["platform_token"],
             "ipv4": user["ipv4"],
             "country": user["country"],
-            "uuid_track": FAKE.uuid4(),
+            "uuid_track": FAKER.uuid4(),
         },
         "event_timestamp_ms": {
             "ts": now.int_timestamp,
@@ -66,7 +66,7 @@ def event_track_playback(user) -> dict[str, Any]:
         },
     }
 
-def event_pause_track(user) -> dict[str, Any]:
+def event_pause_track(user: pd.Series = None) -> dict[str, Any]:
     """
     Метод возвращает событие паузы трека.
 
@@ -82,7 +82,7 @@ def event_pause_track(user) -> dict[str, Any]:
             "platform_token": user["platform_token"],
             "ipv4": user["ipv4"],
             "country": user["country"],
-            "uuid_track": FAKE.uuid4(),
+            "uuid_track": FAKER.uuid4(),
         },
         "event_timestamp_ms": {
             "ts": now.int_timestamp,
@@ -90,7 +90,7 @@ def event_pause_track(user) -> dict[str, Any]:
         },
     }
 
-def event_resume_track(user) -> dict[str, Any]:
+def event_resume_track(user: pd.Series = None) -> dict[str, Any]:
     """
     Метод возвращает событие возобновления трека.
 
@@ -106,7 +106,7 @@ def event_resume_track(user) -> dict[str, Any]:
             "platform_token": user["platform_token"],
             "ipv4": user["ipv4"],
             "country": user["country"],
-            "uuid_track": FAKE.uuid4(),
+            "uuid_track": FAKER.uuid4(),
         },
         "event_timestamp_ms": {
             "ts": now.int_timestamp,
@@ -114,7 +114,7 @@ def event_resume_track(user) -> dict[str, Any]:
         },
     }
 
-def event_skipping_track_next(user) -> dict[str, Any]:
+def event_skipping_track_next(user: pd.Series = None) -> dict[str, Any]:
     """
     Метод возвращает событие пропуска трека вперед.
 
@@ -130,8 +130,8 @@ def event_skipping_track_next(user) -> dict[str, Any]:
             "platform_token": user["platform_token"],
             "ipv4": user["ipv4"],
             "country": user["country"],
-            "uuid_track_prev": FAKE.uuid4(),
-            "uuid_track_current": FAKE.uuid4(),
+            "uuid_track_prev": FAKER.uuid4(),
+            "uuid_track_current": FAKER.uuid4(),
         },
         "event_timestamp_ms": {
             "ts": now.int_timestamp,
@@ -139,7 +139,7 @@ def event_skipping_track_next(user) -> dict[str, Any]:
         },
     }
 
-def event_skipping_track_prev(user) -> dict[str, Any]:
+def event_skipping_track_prev(user: pd.Series = None) -> dict[str, Any]:
     """
     Метод возвращает событие пропуска трека назад.
 
@@ -155,8 +155,8 @@ def event_skipping_track_prev(user) -> dict[str, Any]:
             "platform_token": user["platform_token"],
             "ipv4": user["ipv4"],
             "country": user["country"],
-            "uuid_track_current": FAKE.uuid4(),
-            "uuid_track_prev": FAKE.uuid4(),
+            "uuid_track_current": FAKER.uuid4(),
+            "uuid_track_prev": FAKER.uuid4(),
         },
         "event_timestamp_ms": {
             "ts": now.int_timestamp,
@@ -164,7 +164,7 @@ def event_skipping_track_prev(user) -> dict[str, Any]:
         },
     }
 
-def event_adding_track_to_playlist(user) -> dict[str, Any]:
+def event_adding_track_to_playlist(user: pd.Series = None) -> dict[str, Any]:
     """
     Метод возвращает событие добавления трека в плейлист.
 
@@ -180,8 +180,8 @@ def event_adding_track_to_playlist(user) -> dict[str, Any]:
             "platform_token": user["platform_token"],
             "ipv4": user["ipv4"],
             "country": user["country"],
-            "uuid_track": FAKE.uuid4(),
-            "uuid_playlist": FAKE.uuid4(),
+            "uuid_track": FAKER.uuid4(),
+            "uuid_playlist": FAKER.uuid4(),
         },
         "event_timestamp_ms": {
             "ts": now.int_timestamp,
@@ -189,7 +189,7 @@ def event_adding_track_to_playlist(user) -> dict[str, Any]:
         },
     }
 
-def event_track_like(user) -> dict[str, Any]:
+def event_track_like(user: pd.Series = None) -> dict[str, Any]:
     """
     Метод возвращает событие лайка трека.
 
@@ -213,7 +213,7 @@ def event_track_like(user) -> dict[str, Any]:
         },
     }
 
-def event_track_unlike(user) -> dict[str, Any]:
+def event_track_unlike(user: pd.Series = None) -> dict[str, Any]:
     """
     Метод возвращает событие снятия лайка с трека.
 
@@ -248,7 +248,7 @@ event_functions = {
     8: event_track_unlike,
 }
 
-def generate_realistic_event(df):
+def generate_realistic_event(df: pd.DataFrame = None) -> dict[str, Any]:
     """
     Метод генерирует реалистичное событие на основе DataFrame пользователей.
 
