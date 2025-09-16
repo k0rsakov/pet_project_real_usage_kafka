@@ -150,10 +150,12 @@ Kafka + Python + MinIO верхнеуровнево:
 
 ```mermaid
 flowchart TB
+    AA["Producer<br>(Отправитель)"] -- Отправляет сообщения --> A((Kafka<br>Topic))
     A["Kafka<br>Topic"] -- poll messages --> B["Python Consumer<br>(kafka_to_minio_parquet_on_python.py)"]
     B -- batch (.json -> pd.DataFrame) --> C["Pandas DataFrame"]
     C -- Save as .parquet --> D["MinIO<br>(S3 совместимое хранилище)"]
 
+    style AA fill:#f9f,stroke:#333,stroke-width:1px
     style A fill:#bbf,stroke:#333,stroke-width:2px
     style B fill:#ffe599,stroke:#333,stroke-width:2px
     style C fill:#b6d7a8,stroke:#333,stroke-width:2px
