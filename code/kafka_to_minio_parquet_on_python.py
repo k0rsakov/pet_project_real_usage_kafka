@@ -11,9 +11,9 @@ KAFKA_TOPIC = "music_events"
 KAFKA_GROUP = "ParquetConsumerGroup"
 BATCH_SIZE = 100
 
-bucket_name = "prod-python"
+BUCKET_NAME = "prod-python"
 
-storage_options = {
+STORAGE_OPTIONS = {
     "key": access_key,
     "secret": secret_key,
     "client_kwargs": {"endpoint_url": "http://localhost:9000"},
@@ -31,11 +31,11 @@ def save_batch_to_minio(batch) -> None:
     df = pd.json_normalize(batch)
     date_str = datetime.now(UTC).strftime("%Y-%m-%d")
     file_uuid = uuid.uuid4()
-    path = f"s3://{bucket_name}/{date_str}/{file_uuid}.parquet"
+    path = f"s3://{BUCKET_NAME}/{date_str}/{file_uuid}.parquet"
     df.to_parquet(
         path=path,
         index=False,
-        storage_options=storage_options,
+        storage_options=STORAGE_OPTIONS,
     )
     print(f"Batch saved to {path}")
 
