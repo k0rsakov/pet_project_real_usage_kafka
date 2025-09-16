@@ -111,7 +111,7 @@ docker exec -it kafka kafka-consumer-groups \
 | id | name_en                  | name_ru               |
 |----|--------------------------|-----------------------|
 | 1  | track_playback           | Воспроизведение трека |
-| 2  | Pause_track              | Пауза трека           |
+| 2  | pause_track              | Пауза трека           |
 | 3  | resume_track             | Возобновление трека   |
 | 4  | skipping_track_next      | Перелистывание вперёд |
 | 5  | skipping_track_prev      | Перелистывание назад  |
