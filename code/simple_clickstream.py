@@ -33,12 +33,21 @@ def generate_users_df(n: int = 100) -> pd.DataFrame:
     print(f"Generating {n} users...")
     users = []
     for _ in range(n):
-        users.append({  # noqa: PERF401
-            "id": faker.uuid4(),
-            "platform_token": faker.android_platform_token(),
-            "ipv4": faker.ipv4(),
-            "country": faker.country(),
-        })
+        # Случайно выбираем между Android и iOS
+        platform_token = random.choice(
+            [
+                faker.android_platform_token(),
+                faker.ios_platform_token()
+            ]
+        )
+        users.append(
+            {
+                "id": faker.uuid4(),
+                "platform_token": platform_token,
+                "ipv4": faker.ipv4(),
+                "country": faker.country(),
+            }
+        )
     return pd.DataFrame(users)
 
 
