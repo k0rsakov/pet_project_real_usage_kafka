@@ -34,11 +34,11 @@ def generate_users_df(n: int = 100) -> pd.DataFrame:
     users = []
     for _ in range(n):
         # Случайно выбираем между Android и iOS
-        platform_token = random.choice(
+        platform_token = random.choice( # noqa: S311
             [
                 faker.android_platform_token(),
-                faker.ios_platform_token()
-            ]
+                faker.ios_platform_token(),
+            ],
         )
         users.append(
             {
@@ -46,7 +46,7 @@ def generate_users_df(n: int = 100) -> pd.DataFrame:
                 "platform_token": platform_token,
                 "ipv4": faker.ipv4(),
                 "country": faker.country(),
-            }
+            },
         )
     return pd.DataFrame(users)
 
@@ -312,4 +312,6 @@ def send_clickstream_events_to_kafka_rps(
 
 if __name__ == "__main__":
     df = generate_users_df(n=10_000)
-    send_clickstream_events_to_kafka_rps(df, topic="music_events", bootstrap_servers="localhost:19092", rps=2)
+    send_clickstream_events_to_kafka_rps(
+        df=df,
+    )
