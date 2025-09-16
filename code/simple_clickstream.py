@@ -10,7 +10,7 @@ from faker import Faker
 
 events = {
     1: "track_playback",
-    2: "Pause_track",
+    2: "pause_track",
     3: "resume_track",
     4: "skipping_track_next",
     5: "skipping_track_prev",
