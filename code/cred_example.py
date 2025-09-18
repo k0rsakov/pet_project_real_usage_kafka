@@ -1,2 +1,2 @@
-access_key=""
-secret_key=""  # noqa: S105
+access_key = ""
+secret_key = ""  # noqa: S105

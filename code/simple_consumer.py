@@ -1,7 +1,7 @@
 from confluent_kafka import Consumer, KafkaError, TopicPartition
 
 
-def consume_messages(topic: str |None = None, offset: int | None = None) -> None:
+def consume_messages(topic: str | None = None, offset: int | None = None) -> None:
     conf = {
         "bootstrap.servers": "localhost:19092",
         "group.id": "mygroup",
@@ -28,7 +28,7 @@ def consume_messages(topic: str |None = None, offset: int | None = None) -> None
                 else:
                     print(f"Error: {msg.error()}")
             else:
-                print(f'Received message: {msg.value().decode("utf-8")}')
+                print(f"Received message: {msg.value().decode('utf-8')}")
     except KeyboardInterrupt:
         pass
     finally:

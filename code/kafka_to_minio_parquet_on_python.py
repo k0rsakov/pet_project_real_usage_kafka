@@ -19,6 +19,7 @@ STORAGE_OPTIONS = {
     "client_kwargs": {"endpoint_url": "http://localhost:9000"},
 }
 
+
 def save_batch_to_minio(batch) -> None:
     """
     Метод для сохранения батча сообщений в MinIO в формате Parquet.
@@ -39,10 +40,11 @@ def save_batch_to_minio(batch) -> None:
     )
     print(f"Batch saved to {path}")
 
+
 def consume_messages(
-        topic: str | None= None,
-        batch_size: int = 100,
-        offset: int | None = None,
+    topic: str | None = None,
+    batch_size: int = 100,
+    offset: int | None = None,
 ) -> None:
     """
     Метод для чтения сообщений из Kafka и сохранения их в MinIO в формате Parquet.
@@ -90,6 +92,7 @@ def consume_messages(
         if batch:
             save_batch_to_minio(batch)
         consumer.close()
+
 
 if __name__ == "__main__":
     # Пример вызова: читаем с начала топика

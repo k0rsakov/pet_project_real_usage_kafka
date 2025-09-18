@@ -34,7 +34,7 @@ def generate_users_df(n: int = 100) -> pd.DataFrame:
     users = []
     for _ in range(n):
         # Случайно выбираем между Android и iOS
-        platform_token = random.choice( # noqa: S311
+        platform_token = random.choice(  # noqa: S311
             [
                 faker.android_platform_token(),
                 faker.ios_platform_token(),
@@ -49,7 +49,6 @@ def generate_users_df(n: int = 100) -> pd.DataFrame:
             },
         )
     return pd.DataFrame(users)
-
 
 
 def event_track_playback(user: pd.Series = None) -> dict[str, Any]:
@@ -76,6 +75,7 @@ def event_track_playback(user: pd.Series = None) -> dict[str, Any]:
         },
     }
 
+
 def event_pause_track(user: pd.Series = None) -> dict[str, Any]:
     """
     Метод возвращает событие паузы трека.
@@ -100,6 +100,7 @@ def event_pause_track(user: pd.Series = None) -> dict[str, Any]:
         },
     }
 
+
 def event_resume_track(user: pd.Series = None) -> dict[str, Any]:
     """
     Метод возвращает событие возобновления трека.
@@ -123,6 +124,7 @@ def event_resume_track(user: pd.Series = None) -> dict[str, Any]:
             "ts_ms": int(now.float_timestamp * 1000),
         },
     }
+
 
 def event_skipping_track_next(user: pd.Series = None) -> dict[str, Any]:
     """
@@ -149,6 +151,7 @@ def event_skipping_track_next(user: pd.Series = None) -> dict[str, Any]:
         },
     }
 
+
 def event_skipping_track_prev(user: pd.Series = None) -> dict[str, Any]:
     """
     Метод возвращает событие пропуска трека назад.
@@ -173,6 +176,7 @@ def event_skipping_track_prev(user: pd.Series = None) -> dict[str, Any]:
             "ts_ms": int(now.float_timestamp * 1000),
         },
     }
+
 
 def event_adding_track_to_playlist(user: pd.Series = None) -> dict[str, Any]:
     """
@@ -199,6 +203,7 @@ def event_adding_track_to_playlist(user: pd.Series = None) -> dict[str, Any]:
         },
     }
 
+
 def event_track_like(user: pd.Series = None) -> dict[str, Any]:
     """
     Метод возвращает событие лайка трека.
@@ -222,6 +227,7 @@ def event_track_like(user: pd.Series = None) -> dict[str, Any]:
             "ts_ms": int(now.float_timestamp * 1000),
         },
     }
+
 
 def event_track_unlike(user: pd.Series = None) -> dict[str, Any]:
     """
@@ -247,6 +253,7 @@ def event_track_unlike(user: pd.Series = None) -> dict[str, Any]:
         },
     }
 
+
 event_functions = {
     1: event_track_playback,
     2: event_pause_track,
@@ -257,6 +264,7 @@ event_functions = {
     7: event_track_like,
     8: event_track_unlike,
 }
+
 
 def generate_realistic_event(df: pd.DataFrame = None) -> dict[str, Any]:
     """
@@ -277,11 +285,12 @@ def generate_realistic_event(df: pd.DataFrame = None) -> dict[str, Any]:
     event_func = event_functions[event_type_id]
     return event_func(user_row)
 
+
 def send_clickstream_events_to_kafka_rps(
-        df: pd.DataFrame = None,
-        topic: str = "music_events",
-        bootstrap_servers: str = "localhost:19092",
-        rps: int = 2,
+    df: pd.DataFrame = None,
+    topic: str = "music_events",
+    bootstrap_servers: str = "localhost:19092",
+    rps: int = 2,
 ) -> None:
     """
     Kafka producer, который отправляет события в Kafka с заданным RPS.
@@ -309,6 +318,7 @@ def send_clickstream_events_to_kafka_rps(
             time.sleep(sleep_time)
     except KeyboardInterrupt:
         print("Stopped by user.")
+
 
 if __name__ == "__main__":
     df = generate_users_df(n=10_000)

@@ -91,5 +91,3 @@ first_10_rows_1_event_id = conn.sql(
 )
 
 print(first_10_rows_1_event_id.show(max_col_width=9))
-
-

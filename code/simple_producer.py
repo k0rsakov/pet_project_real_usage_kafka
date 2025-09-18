@@ -8,7 +8,6 @@ from faker import Faker
 
 
 def generate_list_of_dict() -> dict[str, str]:
-
     fake = Faker(locale="ru_RU")
 
     return {
