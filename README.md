@@ -7,12 +7,12 @@
 Kafka, Python, S3 (MinIO) и ClickHouse.
 
 Ссылки:
-Менторство/консультации по IT – https://korsak0v.notion.site/Data-Engineer-185c62fdf79345eb9da9928356884ea0
-TG канал – https://t.me/DataLikeQWERTY
-Instagram – https://www.instagram.com/i__korsakov/
-Habr – https://habr.com/ru/users/k0rsakov/publications/articles/
-GitHub проекта – https://github.com/k0rsakov/pet_project_real_usage_kafka
-Инфраструктура для data engineer Kafka – https://habr.com/ru/articles/836302/
+- Менторство/консультации по IT – https://korsak0v.notion.site/Data-Engineer-185c62fdf79345eb9da9928356884ea0
+- TG канал – https://t.me/DataLikeQWERTY
+- Instagram – https://www.instagram.com/i__korsakov/
+- Habr – https://habr.com/ru/users/k0rsakov/publications/articles/
+- GitHub проекта – https://github.com/k0rsakov/pet_project_real_usage_kafka
+- Инфраструктура для data engineer Kafka – https://habr.com/ru/articles/836302/
 
 🔻 Что тебя ждет:
 
